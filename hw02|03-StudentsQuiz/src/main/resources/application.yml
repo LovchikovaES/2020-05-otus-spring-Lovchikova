@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  banner:
+    location: classpath:/banner.txt
+
+application:
+  locale: ru_RU
+  quantityCorrectAnswersToPass: 4
