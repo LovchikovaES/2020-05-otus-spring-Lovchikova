@@ -1,35 +1,45 @@
 package ru.otus.spring.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Repository;
 import ru.otus.spring.config.AppProperties;
+import ru.otus.spring.csv.CsvReader;
 import ru.otus.spring.model.Answer;
 import ru.otus.spring.model.Question;
-import ru.otus.spring.utils.CsvReader;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository("questionDao")
 public class QuestionDaoImpl implements QuestionDao {
-    private final String csvPath;
+    private final CsvReader csvReader;
 
-    @Autowired
-    public QuestionDaoImpl(MessageSource messageSource, AppProperties appProperties) {
-        csvPath = messageSource.getMessage("quiz.csv.path", new String[]{}, appProperties.getLocale());
-    }
-
-    public QuestionDaoImpl(String csvPath) {
-        this.csvPath = csvPath;
+    public QuestionDaoImpl(AppProperties appProperties) {
+        this.csvReader = new CsvReader(String.format(appProperties.getCsvPath(), appProperties.getLocale()));
     }
 
     @Override
     public List<Question> getAll() {
         List<Question> questions = new ArrayList<>();
-        var csvLineValues = CsvReader.getCsvLineValues(this.csvPath);
-        for (var line : csvLineValues) {
-            questions.add(new Question(line.get(0), createAnswers(line.subList(2, line.size()), line.get(1))));
+        var csvRows = csvReader.getCsvLineValues();
+        try {
+            for (var row : csvRows) {
+                var questionText = row.get(0);
+                var correctAnswer = row.get(1);
+                var answersTexts = row.subList(2, row.size());
+                int i = 0;
+                for (var answersText : answersTexts) {
+                    if (answersText.isEmpty()) {
+                        answersTexts.remove(i);
+                    }
+                    i++;
+                }
+                if (questionText.isEmpty() || correctAnswer.isEmpty() || answersTexts.size() == 0) {
+                    throw new RuntimeException("Incorrect structure of csv file");
+                }
+                questions.add(new Question(questionText, createAnswers(answersTexts, correctAnswer)));
+            }
+        } catch (IndexOutOfBoundsException e) {
+            throw new RuntimeException("Incorrect structure of csv file");
         }
         return questions;
     }

@@ -1,5 +1,0 @@
-Какая команда git скачивает репозиторий из GitHub на ваш компьютер?;git clone;git push;git fork;git clone;git commit;
-Команда, противоположная git clone, которая загружает ваши изменения и код из локального репозитория обратно на GitHub?;git push;git push;git add;git upload;git status;
-Кам можно проверить статус вашего локального репозитория с момента вашего последнего коммита?;git status;git check;git status;git commit;git diff;
-Какой из вариантов корректен для команды commit с сообщением?;git commit -am "I'm coding";git message -am "I'm coding";git add -a "I'm coding";git commit -a "I'm coding";git commit -am "I'm coding";
-Какая команда добавляет ваши изменения в staging area?;git add .;git commit add .;git commit .;git add .;git push -am "Message";

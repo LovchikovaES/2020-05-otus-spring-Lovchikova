@@ -1,48 +1,72 @@
 package ru.otus.spring.quiz;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.config.AppProperties;
+import ru.otus.spring.config.LocaleMessage;
+import ru.otus.spring.io.IOService;
 import ru.otus.spring.model.Question;
 import ru.otus.spring.service.QuestionService;
 
 import java.util.List;
-import java.util.Scanner;
 
 @Service("quiz")
 public class QuizImpl implements Quiz {
     private final QuestionService questionService;
-    private final MessageSource messageSource;
+    private final LocaleMessage localeMessage;
     private final AppProperties appProperties;
+    private final IOService ioService;
     private int quantityCorrectAnswers;
+    private String lastName;
+    private String firstName;
 
     public QuizImpl(QuestionService questionService,
-                    MessageSource messageSource,
-                    AppProperties appProperties) {
+                    LocaleMessage localeMessage,
+                    AppProperties appProperties,
+                    IOService ioService) {
         this.questionService = questionService;
+        this.localeMessage = localeMessage;
         this.appProperties = appProperties;
-        this.messageSource = messageSource;
+        this.ioService = ioService;
     }
 
     @Override
     public void start() {
+        askName();
+        askQuestions();
+        showResults();
+    }
+
+    private void askQuestions() {
+        int answerIndex;
         List<Question> questions = questionService.getAll();
-        Scanner in = new Scanner(System.in);
         for (var question : questions) {
-            System.out.println(question);
-            int answerIndex = in.nextInt();
-            if (question.isAnswerCorrect(answerIndex)) {
-                quantityCorrectAnswers++;
-                System.out.println(messageSource.getMessage("answer.correct", new String[]{}, appProperties.getLocale()));
-            } else {
-                System.out.println(messageSource.getMessage("answer.incorrect", new String[]{}, appProperties.getLocale()));
+            ioService.put(question);
+            try {
+                answerIndex = Integer.parseInt(ioService.get());
+                if (question.isAnswerCorrect(answerIndex)) {
+                    quantityCorrectAnswers++;
+                    ioService.put(localeMessage.getMessage("answer.correct"));
+                } else {
+                    ioService.put(localeMessage.getMessage("answer.incorrect"));
+                }
+            } catch (NumberFormatException e) {
+                ioService.put(localeMessage.getMessage("answer.incorrect"));
             }
         }
-        in.close();
-        if (quantityCorrectAnswers >= appProperties.getQuantityCorrectAnswersToPass()) {
-            System.out.println(messageSource.getMessage("quiz.status.success", new String[]{}, appProperties.getLocale()));
+    }
+
+    private void showResults() {
+        if (this.quantityCorrectAnswers >= appProperties.getQuantityCorrectAnswersToPass()) {
+            ioService.put(this.localeMessage.getMessage("quiz.status.success"));
         } else {
-            System.out.println(messageSource.getMessage("quiz.status.failed", new String[]{}, appProperties.getLocale()));
+            ioService.put(localeMessage.getMessage("quiz.status.failed"));
         }
+    }
+
+    private void askName() {
+        ioService.put(localeMessage.getMessage("last.name") + ":");
+        this.lastName = ioService.get();
+        ioService.put(localeMessage.getMessage("first.name") + ":");
+        this.firstName = ioService.get();
     }
 }

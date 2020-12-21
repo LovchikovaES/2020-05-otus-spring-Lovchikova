@@ -4,7 +4,11 @@ server:
 spring:
   banner:
     location: classpath:/banner.txt
+  messages:
+    basename: i18n.bundle
+    encoding: UTF-8
 
 application:
   locale: ru_RU
   quantityCorrectAnswersToPass: 4
+  csvPath: /quiz/quiz_%s.csv

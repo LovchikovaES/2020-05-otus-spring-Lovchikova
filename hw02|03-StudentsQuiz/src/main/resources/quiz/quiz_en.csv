@@ -1,0 +1,5 @@
+What's the git command that downloads your repository from GitHub to your computer?;git clone;git push;git fork;git clone;git commit;
+What's the opposite of git clone, instead of downloading your code from GitHub, uploads your changes and code back to GitHub?;git push;git push;git add;git upload;git status;
+How do you check the state of your local git repository since your last commit?;git status;git check;git status;git commit;git diff;
+What is the correct commit syntax for all changes with a message?;git commit -am "I'm coding";git message -am "I'm coding";git add -a "I'm coding";git commit -a "I'm coding";git commit -am "I'm coding";
+What's a shortcut to staging all the changes you have?;git add .;git commit add .;git commit .;git add .;git push -am "Message";
