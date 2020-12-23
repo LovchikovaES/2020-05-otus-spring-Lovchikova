@@ -1,14 +1,15 @@
-package ru.otus.spring.config;
+package ru.otus.spring.service;
 
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import ru.otus.spring.config.AppProperties;
 
-@Component
-public class LocaleMessage {
+@Service
+public class LocalizedMessageService {
     private final MessageSource messageSource;
     private final AppProperties appProperties;
 
-    public LocaleMessage(MessageSource messageSource, AppProperties appProperties) {
+    public LocalizedMessageService(MessageSource messageSource, AppProperties appProperties) {
         this.appProperties = appProperties;
         this.messageSource = messageSource;
     }

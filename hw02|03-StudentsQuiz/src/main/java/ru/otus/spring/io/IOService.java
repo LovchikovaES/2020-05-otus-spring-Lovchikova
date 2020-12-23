@@ -2,7 +2,7 @@ package ru.otus.spring.io;
 
 public interface IOService {
 
-    void put(Object object);
+    void output(Object object);
 
     String get();
 }

@@ -24,7 +24,7 @@ public class IOConsoleService implements IOService {
     }
 
     @Override
-    public void put(Object object) {
+    public void output(Object object) {
         out.println(object.toString());
     }
 

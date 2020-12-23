@@ -9,6 +9,6 @@ spring:
     encoding: UTF-8
 
 application:
-  locale: ru_RU
+  locale: en
   quantityCorrectAnswersToPass: 4
   csvPath: /quiz/quiz_%s.csv

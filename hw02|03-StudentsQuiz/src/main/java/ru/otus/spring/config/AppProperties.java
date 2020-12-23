@@ -28,7 +28,7 @@ public class AppProperties {
     }
 
     public String getCsvPath() {
-        return csvPath;
+        return String.format(this.csvPath, getLocale());
     }
 
     public void setCsvPath(String csvPath) {

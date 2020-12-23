@@ -12,15 +12,18 @@ import java.util.List;
 @Repository("questionDao")
 public class QuestionDaoImpl implements QuestionDao {
     private final CsvReader csvReader;
+    private final AppProperties appProperties;
 
-    public QuestionDaoImpl(AppProperties appProperties) {
-        this.csvReader = new CsvReader(String.format(appProperties.getCsvPath(), appProperties.getLocale()));
+    public QuestionDaoImpl(AppProperties appProperties,
+                           CsvReader csvReader) {
+        this.csvReader = csvReader;
+        this.appProperties = appProperties;
     }
 
     @Override
     public List<Question> getAll() {
         List<Question> questions = new ArrayList<>();
-        var csvRows = csvReader.getCsvLineValues();
+        var csvRows = csvReader.getCsvLineValues(appProperties.getCsvPath());
         try {
             for (var row : csvRows) {
                 var questionText = row.get(0);
@@ -34,12 +37,12 @@ public class QuestionDaoImpl implements QuestionDao {
                     i++;
                 }
                 if (questionText.isEmpty() || correctAnswer.isEmpty() || answersTexts.size() == 0) {
-                    throw new RuntimeException("Incorrect structure of csv file");
+                    throw new QuestionDaoException("Incorrect structure of csv file");
                 }
                 questions.add(new Question(questionText, createAnswers(answersTexts, correctAnswer)));
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new RuntimeException("Incorrect structure of csv file");
+            throw new QuestionDaoException("Incorrect structure of csv file");
         }
         return questions;
     }
