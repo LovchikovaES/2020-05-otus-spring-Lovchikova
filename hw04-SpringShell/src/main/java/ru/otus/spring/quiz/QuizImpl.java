@@ -1,6 +1,7 @@
 package ru.otus.spring.quiz;
 
 import org.springframework.stereotype.Service;
+import ru.otus.spring.auth.User;
 import ru.otus.spring.config.AppProperties;
 import ru.otus.spring.model.Question;
 import ru.otus.spring.service.IOMessageService;
@@ -15,8 +16,7 @@ public class QuizImpl implements Quiz {
     private final IOMessageService ioMessageService;
 
     private int quantityCorrectAnswers;
-    private String lastName;
-    private String firstName;
+    private User user;
 
     public QuizImpl(QuestionService questionService,
                     AppProperties appProperties,
@@ -35,19 +35,15 @@ public class QuizImpl implements Quiz {
     @Override
     public void login() {
         ioMessageService.outputMessage("last.name");
-        this.lastName = ioMessageService.get();
+        var lastName = ioMessageService.get();
         ioMessageService.outputMessage("first.name");
-        this.firstName = ioMessageService.get();
+        var firstName = ioMessageService.get();
+        this.user = new User(lastName, firstName);
     }
 
     @Override
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    @Override
-    public String getFirstName() {
-        return this.firstName;
+    public boolean isUserLoggedIn() {
+        return user != null;
     }
 
     private void askQuestions() {

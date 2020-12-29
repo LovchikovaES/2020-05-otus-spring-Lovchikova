@@ -5,7 +5,5 @@ public interface Quiz {
 
     void login();
 
-    String getLastName();
-
-    String getFirstName();
+    boolean isUserLoggedIn();
 }

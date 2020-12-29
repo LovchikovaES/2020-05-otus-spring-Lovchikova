@@ -27,6 +27,6 @@ public class ApplicationEventsCommands {
     }
 
     private Availability isQuizCommandAvailable() {
-        return quiz.getFirstName() == null || quiz.getLastName() == null ? Availability.unavailable("Сначала залогиньтесь") : Availability.available();
+        return quiz.isUserLoggedIn() ? Availability.available() : Availability.unavailable("Сначала залогиньтесь");
     }
 }
