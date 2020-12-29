@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  shell:
+    interactive:
+      enabled: false
+
+application:
+  locale: en_GB
+  csvPath: /quiz/quiz_%s.csv
+  quantityCorrectAnswersToPass: 3

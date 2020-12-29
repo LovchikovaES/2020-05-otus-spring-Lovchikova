@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  banner:
+    location: classpath:/banner.txt
+  messages:
+    basename: i18n.bundle
+    encoding: UTF-8
+
+application:
+  locale: en
+  quantityCorrectAnswersToPass: 4
+  csvPath: /quiz/quiz_%s.csv
