@@ -1,6 +1,7 @@
 package ru.otus.spring.dao;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -38,6 +39,31 @@ class BookDaoJdbcTest {
     @Autowired
     private BookDaoJdbc bookDao;
 
+    @BeforeEach
+    void setUpAuthorDao() {
+        Mockito.when(authorDao.getById(Mockito.anyLong())).thenAnswer((Answer<Author>) invocationOnMock -> {
+            long id = invocationOnMock.getArgument(0);
+            return new Author(id);
+        });
+        Mockito.when(authorDao.getAll()).thenReturn(Arrays.asList(
+                new Author(1),
+                new Author(2),
+                new Author(3)));
+    }
+
+    @BeforeEach
+    void setUpGenreDao() {
+        Mockito.when(genreDao.getById(Mockito.anyLong())).thenAnswer((Answer<Genre>) invocationOnMock -> {
+            long id = invocationOnMock.getArgument(0);
+            return new Genre(id);
+        });
+
+        Mockito.when(genreDao.getAll()).thenReturn(Arrays.asList(
+                new Genre(1),
+                new Genre(2),
+                new Genre(3)));
+    }
+
     @Test
     @DisplayName("исключение если id не найден")
     void shouldReturnExceptionWhenIdNotFound() {
@@ -50,8 +76,6 @@ class BookDaoJdbcTest {
     @DisplayName("возвращает книгу по id")
     void shouldReturnBookWhenGetById() {
         Book expectedBook = new Book(1, "Sherlock Holmes", new Author(1), new Genre(3));
-        Mockito.when(authorDao.getById(1)).thenReturn(new Author(1));
-        Mockito.when(genreDao.getById(3)).thenReturn(new Genre(3));
         var actualBook = bookDao.getById(expectedBook.getId());
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
@@ -69,15 +93,6 @@ class BookDaoJdbcTest {
     @Test
     @DisplayName("возвращает все книги")
     void shouldReturnAllBooks() {
-        Mockito.when(authorDao.getById(Mockito.anyLong())).thenAnswer((Answer<Author>) invocationOnMock -> {
-            long id = invocationOnMock.getArgument(0);
-            return new Author(id);
-        });
-        Mockito.when(genreDao.getById(Mockito.anyLong())).thenAnswer((Answer<Genre>) invocationOnMock -> {
-            long id = invocationOnMock.getArgument(0);
-            return new Genre(id);
-        });
-
         List<Book> expectedBooks = Arrays.asList(
                 new Book(1, "Sherlock Holmes", new Author(1), new Genre(3)),
                 new Book(2, "Oliver Twist", new Author(2), new Genre(2)),
@@ -94,15 +109,6 @@ class BookDaoJdbcTest {
         final long newAuthorId = 3L;
         final long newGenreId = 1L;
 
-        Mockito.when(authorDao.getById(Mockito.anyLong())).thenAnswer((Answer<Author>) invocationOnMock -> {
-            long id = invocationOnMock.getArgument(0);
-            return new Author(id);
-        });
-        Mockito.when(genreDao.getById(Mockito.anyLong())).thenAnswer((Answer<Genre>) invocationOnMock -> {
-            long id = invocationOnMock.getArgument(0);
-            return new Genre(id);
-        });
-
         var expectedBook = bookDao.getById(2);
         expectedBook.setName(newName);
         expectedBook.setGenre(new Genre(newGenreId));
@@ -113,6 +119,19 @@ class BookDaoJdbcTest {
         Assertions.assertEquals(actualBook.getAuthor().getId(), expectedBook.getAuthor().getId());
         Assertions.assertEquals(actualBook.getGenre().getId(), expectedBook.getGenre().getId());
         Assertions.assertEquals(actualBook.getName(), expectedBook.getName());
+    }
+
+    @Test
+    @DisplayName("добавляет новую книгу")
+    void shouldInsertNewBook() {
+        var expectedBook = new Book();
+        expectedBook.setName("Test Insert Book Name");
+        expectedBook.setAuthor(new Author(2));
+        expectedBook.setGenre(new Genre(2));
+        bookDao.insert(expectedBook);
+        var allBooks = bookDao.getAll();
+        Book actualBook = allBooks.get(allBooks.size() - 1);
+        assertThat(actualBook).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedBook);
     }
 
 }

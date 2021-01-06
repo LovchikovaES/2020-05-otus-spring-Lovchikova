@@ -8,6 +8,9 @@ public class Book {
     private Author author;
     private Genre genre;
 
+    public Book() {
+    }
+
     public Book(long id,
                 String name,
                 Author author,

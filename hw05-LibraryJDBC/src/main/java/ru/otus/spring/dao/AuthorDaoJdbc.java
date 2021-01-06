@@ -8,6 +8,7 @@ import ru.otus.spring.model.Author;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -24,7 +25,11 @@ public class AuthorDaoJdbc implements AuthorDao {
         Map<String, Object> params = Collections.singletonMap("id", id);
         return namedParameterJdbcOperations.queryForObject(
                 "select * from authors where id = :id", params, new AuthorMapper());
+    }
 
+    @Override
+    public List<Author> getAll() {
+        return namedParameterJdbcOperations.query("select * from authors", new AuthorMapper());
     }
 
     private static class AuthorMapper implements RowMapper<Author> {

@@ -3,7 +3,9 @@ package ru.otus.spring.dao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
+import ru.otus.spring.model.Author;
 import ru.otus.spring.model.Book;
+import ru.otus.spring.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class BookDaoJdbc implements BookDao {
@@ -46,7 +49,11 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public List<Book> getAll() {
-        return namedParameterJdbcOperations.query("select * from books", new BookMapper());
+        Map<Long, Author> authors =
+                authorDao.getAll().stream().collect(Collectors.toMap(Author::getId, author -> author));
+        Map<Long, Genre> genres =
+                genreDao.getAll().stream().collect(Collectors.toMap(Genre::getId, genre -> genre));
+        return namedParameterJdbcOperations.query("select * from books", new BookMapper(authors, genres));
     }
 
     @Override
@@ -69,13 +76,27 @@ public class BookDaoJdbc implements BookDao {
 
     private class BookMapper implements RowMapper<Book> {
 
+        private Map<Long, Author> allAuthors = new HashMap<>();
+        private Map<Long, Genre> allGenres = new HashMap<>();
+
+        private BookMapper(Map<Long, Author> authors,
+                           Map<Long, Genre> genres) {
+            this.allGenres = genres;
+            this.allAuthors = authors;
+        }
+
+        private BookMapper() {
+        }
+
         @Override
         public Book mapRow(ResultSet resultSet, int i) throws SQLException {
             long id = resultSet.getLong("id");
             String name = resultSet.getString("name");
             long authorId = resultSet.getLong("author_id");
             long genreId = resultSet.getLong("genre_id");
-            return new Book(id, name, authorDao.getById(authorId), genreDao.getById(genreId));
+            Author author = allAuthors.get(authorId) == null ? authorDao.getById(authorId) : allAuthors.get(authorId);
+            Genre genre = allGenres.get(genreId) == null ? genreDao.getById(genreId) : allGenres.get(genreId);
+            return new Book(id, name, author, genre);
         }
     }
 }
