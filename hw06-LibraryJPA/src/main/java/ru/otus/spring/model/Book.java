@@ -38,12 +38,6 @@ public class Book {
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "book_id", updatable = false)
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 100)
-    private List<Comment> comments = new ArrayList<>();
-
     public Book() {
     }
 
@@ -85,18 +79,6 @@ public class Book {
 
     public void clearAuthors() {
         authors.clear();
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public void addComment(Comment comment) {
-        comments.add(comment);
     }
 
     @Override
