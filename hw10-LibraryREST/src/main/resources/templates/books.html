@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Books</title>
+    <link href="/styles/styles.css" rel="stylesheet" type="text/css">
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<a href="/"><img src="/img/home_icon.png"></a>
+<h3>Books</h3>
+<table class="users" id="minimalist-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Authors</th>
+        <th>Name</th>
+        <th>Genre</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<button id="newBook">New book</button>
+
+<script>
+$(function() {
+  $.get('/api/books').done(function(books) {
+    books.forEach(function(book) {
+      var authorsList = '<ul>';
+      book.authors.forEach(function(author) {
+        authorsList += '<li>' + author.name + '</li>';
+      });
+      authorsList += '</ul>';
+      $('tbody').append(`
+                <tr>
+                    <td><a href="/books/${book.id}">${book.id}</td>
+                    <td>${authorsList}</td>
+                    <td>${book.name}</td>
+                    <td>${book.genre.name}</td>
+                </tr>
+            `);
+    });
+  })
+
+  $('#newBook').click(function() {
+    window.location.replace('/newbook');
+  });
+});
+
+
+
+
+</script>
+</body>
+</html>

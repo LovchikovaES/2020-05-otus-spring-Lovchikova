@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book</title>
+    <link href="/styles/styles.css" rel="stylesheet" type="text/css">
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/scripts/book_functions.js"></script>
+</head>
+<body>
+<a href="/"><img src="/img/home_icon.png"></a>
+<h3>Book:</h3>
+<div class="row">
+    <label for="id">ID:</label>
+    <input id="id" readonly type="text"/>
+</div>
+<div class="row">
+    <label for="name">Name:</label>
+    <input id="name" type="text"/>
+</div>
+<div class="row">
+    <label for="genre">Genre:</label>
+    <select id="genre" name="genre">
+        <option value="">Choose genre</option>
+    </select>
+</div>
+<div class="row">
+    <label for="authors">Authors:</label>
+    <button id="addAuthor">Add</button>
+    <table id="authors" style="margin-left: 100px;">
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <button id="saveBook" type="submit">Save</button>
+</div>
+<script>
+$(function() {
+
+  $('#saveBook').click(function() {
+    var bookJSON = getBookJson();
+    $.ajax({
+      url: '/api' + window.location.pathname,
+      method: 'PUT',
+      data: bookJSON,
+      contentType: "application/json; charset=utf-8",
+      success: function() {},
+      error: function(error) {}
+    });
+    window.location.replace('/books');
+  });
+
+
+  var authorsSelectOption = '';
+
+  $.when(
+    $.get('/api/authors').done(function(authors) {
+      authorsSelectOption = '<select class="authors"><option value="">Choose author</option>';
+      authors.forEach(function(author) {
+        authorsSelectOption += '<option value="' + author.id + '"';
+        authorsSelectOption += '>' + author.name + '</option>';
+      });
+      authorsSelectOption += '</select>';
+    }),
+    $.get('/api/genres').done(function(genres) {
+      genres.forEach(function(genre) {
+        var option = '<option value="' + genre.id + '"';
+        option += '>' + genre.name + '</option>';
+        $('#genre').append(option);
+      });
+    })
+  ).then(
+    $.get('/api' + window.location.pathname).done(function(book) {
+      $('#id').val(book.id);
+      $('#name').val(book.name);
+      $('#genre').val(book.genre.id).attr('selected', 'selected');
+
+      book.authors.forEach(function(author) {
+        var authorRow = '<tr class="author id-' + author.id + '"><td>';
+        authorRow += authorsSelectOption;
+        authorRow += '</td><td><button class="removeAuthor">Remove</button></td></tr>';
+        $('#authors tbody').append(authorRow);
+        $('.author.id-' + author.id + ' select.authors').val(author.id).attr('selected', 'selected');
+      });
+
+      $('#addAuthor').click(function() {
+        addAuthor(authorsSelectOption);
+
+        $('.removeAuthor').click(function() {
+          removeAuthor(this);
+        });
+      });
+
+      $('.removeAuthor').click(function() {
+        removeAuthor(this);
+      });
+
+    }));
+
+  $('body').append('<p><button id="deleteBook">Delete book</button></p>');
+  $('#deleteBook').click(function() {
+    $.ajax({
+      url: '/api' + window.location.pathname,
+      type: 'DELETE',
+      success: function(result) {}
+    });
+    window.location.replace('/books');
+  });
+});
+
+
+
+
+</script>
+</body>
+</html>
