@@ -45,10 +45,12 @@
           method: 'POST',
           data: bookJSON,
           contentType: "application/json; charset=utf-8",
-          success: function() {},
-          error: function(error) {}
+          success: function() {
+            window.location.replace('/books');
+          },
+          error: function(error) {
+          }
         });
-        window.location.replace('/books');
       });
 
       var authorsSelectOption = '';
@@ -77,11 +79,6 @@
         });
       });
     });
-
-
-
-
-
 </script>
 </body>
 </html>

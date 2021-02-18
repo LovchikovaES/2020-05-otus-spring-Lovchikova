@@ -45,10 +45,11 @@ $(function() {
       method: 'PUT',
       data: bookJSON,
       contentType: "application/json; charset=utf-8",
-      success: function() {},
+      success: function() {
+        window.location.replace('/books');
+      },
       error: function(error) {}
     });
-    window.location.replace('/books');
   });
 
 
@@ -103,9 +104,10 @@ $(function() {
     $.ajax({
       url: '/api' + window.location.pathname,
       type: 'DELETE',
-      success: function(result) {}
+      success: function(result) {
+          window.location.replace('/books');
+      }
     });
-    window.location.replace('/books');
   });
 });
 
