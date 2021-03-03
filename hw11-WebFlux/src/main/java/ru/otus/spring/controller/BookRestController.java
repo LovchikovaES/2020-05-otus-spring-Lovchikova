@@ -29,20 +29,22 @@ public class BookRestController {
 
     @DeleteMapping("/api/books/{bookId}")
     @Transactional
-    public void deleteBook(@PathVariable(name = "bookId") String bookId) {
+    public Mono<Void> deleteBook(@PathVariable(name = "bookId") String bookId) {
         bookRepository.deleteById(bookId).subscribe();
+        return Mono.empty();
     }
 
     @PostMapping("/api/books")
     @Transactional
-    public void createBook(@RequestBody Book book) {
+    public Mono<Void> createBook(@RequestBody Book book) {
         bookRepository.save(book).subscribe();
+        return Mono.empty();
     }
 
     @Transactional
     @PutMapping("/api/books/{bookId}")
-    public void updateBook(@RequestBody Book book) {
+    public Mono<Void> updateBook(@RequestBody Book book) {
         bookRepository.save(book).subscribe();
+        return Mono.empty();
     }
-
 }
