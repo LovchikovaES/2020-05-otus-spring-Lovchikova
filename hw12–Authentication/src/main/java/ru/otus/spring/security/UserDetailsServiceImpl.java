@@ -1,6 +1,5 @@
 package ru.otus.spring.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,8 +9,11 @@ import ru.otus.spring.service.DbServiceUser;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private DbServiceUser dbServiceUser;
+    private final DbServiceUser dbServiceUser;
+
+    public UserDetailsServiceImpl(DbServiceUser dbServiceUser) {
+        this.dbServiceUser = dbServiceUser;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
