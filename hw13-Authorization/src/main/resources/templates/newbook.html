@@ -7,7 +7,7 @@
 </head>
 <body>
 <a href="/"><img src="/img/home_icon.png"></a>
-<form accept-charset="utf-8" id="create-form" th:action="@{/books/{id}(id=${book.id})}" th:method="put">
+<form accept-charset="utf-8" id="create-form" th:action="@{/newbook}" th:method="put">
     <h3>Book:</h3>
     <div class="row">
         <label for="id">ID:</label>
@@ -52,11 +52,5 @@
         <button name="save" type="submit">Save</button>
     </div>
 </form>
-
-<div class="row">
-            <form id="delete-form" th:action="@{/books/{id}(id=${book.id})}" th:method="delete">
-               <button type="submit">Delete book</button>
-            </form>
-         </div>
 </body>
 </html>

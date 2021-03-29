@@ -37,13 +37,13 @@ public class BookController {
         return "books";
     }
 
-    @PostMapping(path = "/books")
+    @GetMapping(path = "/newbook")
     public String createNewBook(Model model) {
         model.addAttribute("book", new Book());
-        return "book";
+        return "newbook";
     }
 
-    @PutMapping(value = "/books/*", params = "save")
+    @PutMapping(value = {"/books/*", "/newbook"}, params = "save")
     public RedirectView saveBook(final Book book) {
         List<Long> authorIds = new ArrayList<>();
 
@@ -62,13 +62,13 @@ public class BookController {
         return new RedirectView("/books", true);
     }
 
-    @PutMapping(path = "/books/*", params = "addAuthor")
+    @PutMapping(path = {"/books/*", "/newbook"}, params = "addAuthor")
     public String addAuthor(final Book book) {
         book.addAuthor(new Author());
         return "book";
     }
 
-    @PutMapping(path = "/books/*", params = "removeAuthor")
+    @PutMapping(path = {"/books/*", "/newbook"}, params = "removeAuthor")
     public String removeAuthor(final Book book, final HttpServletRequest req) {
         final int authorId = Integer.parseInt(req.getParameter("removeAuthor"));
         book.deleteAuthor(authorId);
