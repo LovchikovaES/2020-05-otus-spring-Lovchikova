@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Books</title>
+    <link href="/styles/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<a href="/"><img src="/img/home_icon.png"></a>
+<h3>Books</h3>
+<table class="users" id="minimalist-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Authors</th>
+        <th>Name</th>
+        <th>Genre</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td>
+            <a th:href="@{/books/} + ${book.id}" th:text="${book.id}"/>
+        </td>
+        <td>
+            <ul>
+                <li th:each="author : ${book.authors}">
+                    <span th:text="${author.name}">Ray Bradbury</span>
+                </li>
+            </ul>
+        </td>
+        <td th:text="${book.name}"></td>
+        <td th:text="${book.genre.name}" th:unless="${book.genre == null}"></td>
+    </tr>
+    </tbody>
+</table>
+<form accept-charset="utf-8" action="/newbook" id="new">
+    <button type="submit">New book</button>
+</form>
+</body>
+</html>

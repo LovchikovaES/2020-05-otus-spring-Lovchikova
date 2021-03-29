@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book</title>
+    <link href="/styles/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<a href="/"><img src="/img/home_icon.png"></a>
+<form accept-charset="utf-8" id="create-form" th:action="@{/books/{id}(id=${book.id})}" th:method="put">
+    <h3>Book:</h3>
+    <div class="row">
+        <label for="id">ID:</label>
+        <input id="id" readonly th:field="${book.id}" type="text"/>
+    </div>
+    <div class="row">
+        <label for="name">Name:</label>
+        <input id="name" th:field="${book.name}" type="text"/>
+    </div>
+    <div class="row">
+        <label for="genre">Genre:</label>
+        <select id="genre" th:field="${book.genre}">
+            <option value="">Choose genre</option>
+            <option th:each="genre : ${allGenres}" th:text="${genre.name}" th:value="${genre.id}"></option>
+        </select>
+    </div>
+    <div class="row">
+        <label for="authors">Authors:</label>
+        <table id="authors" style="margin-left: 100px;">
+            <tbody>
+            <tr th:if="${#lists.isEmpty(book.authors)}">
+                <td colspan="1">No author</td>
+            </tr>
+            <tr th:each="author, authorStat : ${book.authors}">
+                <td>
+                    <select th:field="${book.authors[__${authorStat.index}__].id}">
+                        <option value="">Choose author</option>
+                        <option th:each="var : ${allAuthors}"
+                                th:text="${var.name}"
+                                th:value="${var.id}"></option>
+                    </select>
+                </td>
+                <td>
+                    <button name="removeAuthor" th:value="${authorStat.index}" type="submit">Remove</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button name="addAuthor" style="margin-left: 103px;" type="submit">Add</button>
+    </div>
+    <div class="row">
+        <button name="save" type="submit">Save</button>
+    </div>
+</form>
+
+<div class="row">
+            <form id="delete-form" th:action="@{/books/{id}(id=${book.id})}" th:method="delete">
+               <button type="submit">Delete book</button>
+            </form>
+         </div>
+</body>
+</html>
